@@ -767,6 +767,31 @@ public struct ASCollectionView<SectionID: Hashable>: UIViewControllerRepresentab
 		{
 			guard !indexPath.isEmpty else { return [] }
 			guard let dragItem = parent.sections[safe: indexPath.section]?.dataSource.getDragItem(for: indexPath) else { return [] }
+
+            dragItem.previewProvider = {
+                // 4
+                let dragPreviewParams = UIDragPreviewParameters()
+
+                guard let cell = collectionView.cellForItem(at: indexPath) else {
+                    return .init(view: UIView())
+                }
+
+                dragPreviewParams.visiblePath = UIBezierPath(
+
+                    roundedRect: .init(
+
+                        x: 0,
+                        y: 0,
+                        width: cell.contentView.frame.width,
+                        height: cell.contentView.frame.height
+                    ),
+                    cornerRadius: 4.0
+                )
+
+                // 5
+                return UIDragPreview(view: cell.contentView, parameters: dragPreviewParams)
+            }
+
 			return [dragItem]
 		}
 
